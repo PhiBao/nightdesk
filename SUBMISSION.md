@@ -31,6 +31,9 @@ Stack: RWA Data + Market (dynamic V2) + TypeSafe guard · Trading/Transaction wi
   - Transfer probe (dust self-transfer, status 1, block 123361771):
     https://bscscan.com/tx/0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433
     — proves EOA↔EOA movement works while AMM pool delivery reverts
+  - Approval hygiene: leftover 5-USDT router approval revoked on-chain
+    (allowance now 0):
+    https://bscscan.com/tx/0xc1a14d876e15320c8e332a5f9c409eb7c6e2302190859415078ae8429d197804
 - Delivery block (all 28 pools + 3 SPCXB pools): `POST /api/fill` paper returns live
   quote + reverted delivery simulation + `executability.swappable=false`
 - BSC tx hashes: (withdraw hash — paste from Binance history)

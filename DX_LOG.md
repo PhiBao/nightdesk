@@ -107,3 +107,11 @@
   to retail wallets reverts. Mechanism unknown (likely pool sender not cleared by
   the token's transfer gate), but the empirical boundary is now precise: hold and
   move = yes, permissionless swap = no.
+
+## 2026-09-22 — Agent Studio seller + safety loop
+- `nightdeskseller/`: Studio seller wired to a deterministic NightDesk truth
+  fetcher (live RWA numbers injected into the job prompt; LLM narrates, fixed
+  code signs). `negotiate` verified locally (signed 0.1 U quote). Platform
+  deploy + ERC-8004 blocked on founder: GitHub device auth + testnet tBNB/U.
+- Safety loop closed live: kill-switch (`data/HALT`) gates `/api/fill`; leftover
+  router approval revoked on-chain (`0xc1a14d…1978`, allowance now 0).

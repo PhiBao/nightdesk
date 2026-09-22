@@ -134,8 +134,28 @@ export default function Page() {
     }
   }
 
-  async function checkHoldings() {
+  async function revoke(target: "halt" | "resume" | "allowance") {
     setActing(true);
+    setReceipt(null);
+    try {
+      const r = await fetch("/api/revoke", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target }),
+      });
+      const j = (await r.json()) as { ok: boolean; hash?: string; bscscan?: string; halted?: boolean; error?: string };
+      if (!j.ok) throw new Error(j.error ?? "revoke failed");
+      setReceipt(
+        target === "allowance" ? `Approval revoked: ${j.hash}` : target === "halt" ? "Kill-switch ENGAGED — live fills refused." : "Kill-switch released.",
+      );
+    } catch (e) {
+      setReceipt(`Revoke failed: ${(e as Error).message}`);
+    } finally {
+      setActing(false);
+    }
+  }
+
+  async function checkHoldings() {    setActing(true);
     setReceipt(null);
     try {
       const r = await fetch(`/api/holdings?address=${encodeURIComponent(holdAddr.trim())}`);
@@ -363,6 +383,19 @@ export default function Page() {
           </p>
         )}
       </section>
+
+      <footer style={{ borderTop: "1px solid #2a3342", marginTop: 24, paddingTop: 12, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        <span style={{ color: "#8b93a3", fontSize: 13 }}>Safety:</span>
+        <button onClick={() => revoke("halt")} disabled={acting} style={{ padding: "6px 12px", cursor: "pointer" }}>
+          Halt live fills
+        </button>
+        <button onClick={() => revoke("resume")} disabled={acting} style={{ padding: "6px 12px", cursor: "pointer" }}>
+          Resume
+        </button>
+        <button onClick={() => revoke("allowance")} disabled={acting} style={{ padding: "6px 12px", cursor: "pointer" }}>
+          Revoke router approval
+        </button>
+      </footer>
     </div>
   );
 }

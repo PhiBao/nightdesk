@@ -1,8 +1,17 @@
 import { NextResponse } from "next/server";
+import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { assertTicker } from "@/lib/rwa";
 import { broadcastBuy, liveCapUsd, quoteBuy, resolveToken, simulateSwap, verifySwappable, walletAddressOrNull } from "@/lib/swap";
+
+function halted(): boolean {
+  try {
+    return existsSync(join(process.cwd(), "data", "HALT"));
+  } catch {
+    return false;
+  }
+}
 
 // POST /api/fill { ticker, usdAmount, slippageBps?, confirm? }
 //
@@ -46,6 +55,9 @@ export async function POST(req: Request) {
         : { swappable: false, quotedOut: null, dryRunOk: false, reason: "no liquid pool found" };
       const executability = { ...exec, quotedOut: exec.quotedOut == null ? null : exec.quotedOut.toString() };
       return NextResponse.json({ ok: true, mode: "paper", cap, quote, simulation: sim, executability });
+    }
+    if (halted()) {
+      return NextResponse.json({ ok: false, error: "kill-switch engaged (data/HALT exists) — live broadcast refused" }, { status: 403 });
     }
     if (!sim.ok) {
       return NextResponse.json({ ok: false, error: `refusing live broadcast: ${sim.reason}` }, { status: 409 });
