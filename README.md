@@ -33,6 +33,7 @@ conservative after hours) so the demo never dies.
 - `GET /api/alerts` + `POST /api/alerts { ticker, note? }` → alert-at-open, re-evaluated against live truth
 - `POST /api/fill { ticker, usdAmount, slippageBps?, confirm? }` → paper: live V3 quote +
   real `eth_call` simulation. `confirm:true`: LIVE broadcast, only under `MAX_LIVE_USD`
+- `GET /api/holdings?address=0x…` → public balances (BNB + USDT + tracked stock venues)
 
 ## Execution (live path)
 

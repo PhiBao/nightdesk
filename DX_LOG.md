@@ -88,3 +88,11 @@
   (~$153/token) on all three — delivery reverts on all three (minOut=0).
   Deepest pool in the scan so far, same verdict: priced, not deliverable.
   All probes read-only; no gas spent, wallet funds untouched.
+
+## 2026-09-22 — held-stock proof: 0.080079 SPCXB in demo wallet
+- Withdrawal Binance → BSC landed: `balanceOf(SPCXB) = 80078720000000000`
+  (~$12). `/api/holdings` now serves it publicly alongside BNB/USDT, with a
+  BscScan link — the submission's "real user holds a real tokenized stock" panel.
+- Open science question for later (needs explicit approval, moves funds): a dust
+  wallet-to-wallet transfer probe to test whether the delivery block is
+  pool-specific or a global transfer lock.

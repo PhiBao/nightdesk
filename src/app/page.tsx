@@ -50,6 +50,12 @@ interface LimitIntent {
   simulation: { ok: boolean; reason: string; next: string };
 }
 
+interface Holding {
+  symbol: string;
+  contract: string | null;
+  formatted: string;
+}
+
 const ISSUER = (t: number) => (t === 1 ? "Ondo" : t === 2 ? "xStocks" : t === 3 ? "bStocks" : `type${t}`);
 
 export default function Page() {
@@ -64,6 +70,9 @@ export default function Page() {
   const [receipt, setReceipt] = useState<string | null>(null);
   const [intent, setIntent] = useState<LimitIntent | null>(null);
   const [alerts, setAlerts] = useState<Alert[] | null>(null);
+  const [holdAddr, setHoldAddr] = useState("0x4Ba1e9e275EF61B56C99532D0066506436201D73");
+  const [holdings, setHoldings] = useState<Holding[] | null>(null);
+  const [holdScan, setHoldScan] = useState<string | null>(null);
 
   async function check() {
     setLoading(true);
@@ -125,8 +134,23 @@ export default function Page() {
     }
   }
 
-  async function alertAtOpen() {
+  async function checkHoldings() {
     setActing(true);
+    setReceipt(null);
+    try {
+      const r = await fetch(`/api/holdings?address=${encodeURIComponent(holdAddr.trim())}`);
+      const j = (await r.json()) as { ok: boolean; holdings?: Holding[]; bscscan?: string; error?: string };
+      if (!j.ok) throw new Error(j.error ?? "holdings failed");
+      setHoldings(j.holdings ?? []);
+      setHoldScan(j.bscscan ?? null);
+    } catch (e) {
+      setReceipt(`Holdings failed: ${(e as Error).message}`);
+    } finally {
+      setActing(false);
+    }
+  }
+
+  async function alertAtOpen() {    setActing(true);
     setReceipt(null);
     try {
       const r = await fetch("/api/alerts", {
@@ -293,6 +317,52 @@ export default function Page() {
           </ul>
         </section>
       )}
+
+      <section aria-label="Holdings" style={{ border: "1px solid #2a3342", borderRadius: 12, padding: 16, marginTop: 12 }}>
+        <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>Holdings</h2>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          <label>
+            Address{" "}
+            <input
+              aria-label="Address"
+              value={holdAddr}
+              onChange={(e) => setHoldAddr(e.target.value)}
+              style={{ padding: 8, width: 380, maxWidth: "100%" }}
+              maxLength={42}
+            />
+          </label>
+          <button onClick={checkHoldings} disabled={acting} style={{ padding: "8px 16px", cursor: "pointer" }}>
+            Check holdings
+          </button>
+        </div>
+        {holdings && (
+          <table style={{ width: "100%", marginTop: 12, borderCollapse: "collapse", fontSize: 14 }}>
+            <thead>
+              <tr style={{ color: "#8b93a3", textAlign: "left" }}>
+                <th>Asset</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {holdings
+                .filter((h) => h.formatted !== "0" && !h.formatted.startsWith("0.000000"))
+                .map((h) => (
+                  <tr key={h.symbol} style={{ borderTop: "1px solid #222b3a" }}>
+                    <td>{h.symbol}</td>
+                    <td>{h.formatted}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        )}
+        {holdScan && (
+          <p style={{ color: "#8b93a3", fontSize: 13 }}>
+            <a href={holdScan} target="_blank" rel="noreferrer" style={{ color: "#8ab4ff" }}>
+              View on BscScan
+            </a>
+          </p>
+        )}
+      </section>
     </div>
   );
 }
