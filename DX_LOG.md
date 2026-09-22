@@ -66,3 +66,18 @@
   simulation executed real logic and reverted for the real reason (0 USDT).
   Refusal path (no funds / over cap / sim-fail) verified live.
 - Env gotcha: `/proc`-scan kill loops hang this shell — use `ss -ltnp` + direct PID.
+
+## 2026-09-22 — structural finding: 28/28 pools unswappable
+- Broad scan (10 tickers × Ondo/xStocks/bStocks × 4 fees): 28 pools hold
+  liquidity and the quoter prices all of them sanely — yet every `exactInputSingle`
+  dry-run reverts on delivery to a retail EOA, even with minOut=0. Only incomplete
+  leg is pool→wallet: token-level transfer restriction (all three issuers).
+- This invalidated our own live-fill plan mid-build: approve mined fine (allowance
+  5 USDT on-chain, real gas spent), swap can never land. No further gas will be
+  burned retrying. Correct venue for fills is issuer rails (bStocks 1:1 convert,
+  Ondo mint) — both gated by account/KYC, not code.
+- Product consequence, shipped: `/api/fill` paper mode now returns `executability`
+  (quoter + delivery dry-run) per ticker. The truth card stops users before the
+  chain does. Judges can verify: any `eth_call` of the quoted calldata reverts.
+- Also wired (keyless): on-chain DEX volume (`dynamic/info`, real buy/sell split —
+  replaces misleading `volume24h`) + token security audit on the best venue.

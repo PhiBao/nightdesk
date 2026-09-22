@@ -22,6 +22,12 @@ Stack: RWA Data + Market (dynamic V2) + TypeSafe guard · Trading/Transaction wi
 - [ ] (Stretch, +$2k each) Agentic Wallet session execution + Agent Studio seller for the spread feed
 
 ## Proof section (paste live evidence here)
+- Live mainnet evidence (no fill possible — see structural finding; proofs are
+  on-chain reads anyone can replay):
+  - Demo wallet `0x4Ba1e9e275EF61B56C99532D0066506436201D73` holds 10.29 USDT;
+    `allowance(USDT → V3 router) = 5 USDT` from a mined approval (real gas spent)
+  - `POST /api/fill` paper for NVDA returns live quote + reverted delivery
+    simulation + `executability.swappable=false` with reason
 - BSC tx hashes:
 - Deployed link:
 - Demo video link:

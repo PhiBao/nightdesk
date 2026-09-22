@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { liveCapUsd, pickDeepest, slippageMinOut, type PoolPick } from "../src/lib/swap";
+import { liveCapUsd, pickDeepest, slippageMinOut, swappabilityVerdict, type PoolPick } from "../src/lib/swap";
 
 function pool(sym: string, liq: bigint): PoolPick {
   return { pool: "0xpool", fee: 500, liquidity: liq, tokenContract: "0xtok", symbol: sym, issuerType: 1 };
@@ -24,6 +24,20 @@ describe("slippageMinOut", () => {
   });
 });
 
+describe("swappabilityVerdict", () => {
+  it("calls out priced-but-undeliverable pools", () => {
+    const v = swappabilityVerdict(21976950405154813n, false);
+    expect(v.swappable).toBe(false);
+    expect(v.reason).toMatch(/restricts permissionless transfers/);
+  });
+  it("passes quoted + dry-run", () => {
+    expect(swappabilityVerdict(100n, true).swappable).toBe(true);
+  });
+  it("fails empty quotes", () => {
+    expect(swappabilityVerdict(null, false).swappable).toBe(false);
+    expect(swappabilityVerdict(0n, true).swappable).toBe(false);
+  });
+});
 describe("liveCapUsd", () => {
   it("defaults to 10 and never exceeds hard ceiling", () => {
     delete process.env.MAX_LIVE_USD;

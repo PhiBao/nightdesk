@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { assertTicker } from "@/lib/rwa";
-import { broadcastBuy, liveCapUsd, quoteBuy, simulateSwap } from "@/lib/swap";
+import { broadcastBuy, liveCapUsd, quoteBuy, resolveToken, simulateSwap, verifySwappable, walletAddressOrNull } from "@/lib/swap";
 
 // POST /api/fill { ticker, usdAmount, slippageBps?, confirm? }
 //
@@ -40,7 +40,12 @@ export async function POST(req: Request) {
       minOutTokens: Number(q.minOut) / 10 ** q.tokenDecimals,
     };
     if (body.confirm !== true) {
-      return NextResponse.json({ ok: true, mode: "paper", cap, quote, simulation: sim });
+      const pick = await resolveToken(ticker).catch(() => null);
+      const exec = pick
+        ? await verifySwappable(pick, walletAddressOrNull())
+        : { swappable: false, quotedOut: null, dryRunOk: false, reason: "no liquid pool found" };
+      const executability = { ...exec, quotedOut: exec.quotedOut == null ? null : exec.quotedOut.toString() };
+      return NextResponse.json({ ok: true, mode: "paper", cap, quote, simulation: sim, executability });
     }
     if (!sim.ok) {
       return NextResponse.json({ ok: false, error: `refusing live broadcast: ${sim.reason}` }, { status: 409 });

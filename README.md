@@ -41,6 +41,15 @@ non-zero liquidity wins. Verified 2026-09-22: NVDAx has NO USDT V3 pool (unrouta
 NVDAon routes via fee-100, NVDAB via fee-2500 (deepest). V3 addresses copied from
 `pancake-v3-contracts/deployments/bscMainnet.json`, never from memory.
 
+## Structural finding: liquidity ≠ executability
+
+A 10-ticker × 3-issuer × 4-fee scan (28 liquid pools) showed every pool prices
+correctly via the quoter but reverts on delivery to a retail wallet — tokenized
+stocks restrict permissionless transfers. `/api/fill` paper mode reports this per
+ticker as `executability: { swappable, quotedOut, dryRunOk, reason }` instead of
+pretending a fill is one click away. On-chain evidence: mined 5-USDT approval
+from the demo wallet (readable via `allowance()`), swap leg reverts.
+
 ## Proof
 
 - `test/guard.test.ts` — spread math, session badge, fallback routing

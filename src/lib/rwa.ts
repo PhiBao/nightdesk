@@ -2,7 +2,9 @@
 // Code owns prices, spreads, sessions. TypeSafe only judges intent/risk (see guard.ts).
 
 const BASE = "https://www.binance.com";
+const WEB3 = "https://web3.binance.com";
 const UA = { "User-Agent": "NightDesk/0.1 (hackathon)" };
+const SKILL_UA = { "User-Agent": "binance-web3/1.1 (Skill)", "Accept-Encoding": "identity" };
 
 export type IssuerType = 1 | 2 | 3; // 1=Ondo …on, 2=xStocks …x, 3=bStocks …B
 
@@ -71,6 +73,89 @@ async function fetchJson(url: string, timeoutMs = 12000): Promise<unknown> {
     return (await res.json()) as unknown;
   } finally {
     clearTimeout(t);
+  }
+}
+
+async function fetchWeb3(path: string, timeoutMs = 12000): Promise<unknown> {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${WEB3}${path}`, { headers: SKILL_UA, signal: ctrl.signal });
+    if (!res.ok) throw new Error(`web3 upstream ${res.status} for ${path}`);
+    return (await res.json()) as unknown;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/** On-chain DEX reality check: real buy/sell volume (tokenInfo.volume24h is US-stock volume, NOT this). */
+export interface DexDynamic {
+  priceUsd: number | null;
+  volume24hBuy: number | null;
+  volume24hSell: number | null;
+  liquidityUsd: number | null;
+}
+
+export async function dexDynamic(chainId: string, contractAddress: string): Promise<DexDynamic | null> {
+  try {
+    const raw = (await fetchWeb3(
+      `/bapi/defi/v4/public/wallet-direct/buw/wallet/market/token/dynamic/info/ai?chainId=${encodeURIComponent(chainId)}&contractAddress=${encodeURIComponent(contractAddress)}`,
+    )) as { code?: string; data?: Record<string, string | null> };
+    if (!raw || raw.code !== "000000" || !raw.data) return null;
+    const d = raw.data;
+    const num = (v: string | null | undefined): number | null => {
+      if (v == null) return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+    return {
+      priceUsd: num(d.price),
+      volume24hBuy: num(d.volume24hBuy),
+      volume24hSell: num(d.volume24hSell),
+      liquidityUsd: num(d.liquidity ?? d.tvl),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Token security pre-check for the buy screen: honeypot/tax/verification flags. */
+export interface TokenAudit {
+  riskLevel: string | null;
+  riskScore: number | null;
+  buyTax: string | null;
+  sellTax: string | null;
+  isVerified: boolean | null;
+}
+
+export async function tokenAudit(chainId: string, contractAddress: string): Promise<TokenAudit | null> {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 12000);
+    try {
+      const res = await fetch(`${WEB3}/bapi/defi/v1/public/wallet-direct/security/token/audit`, {
+        method: "POST",
+        headers: { ...SKILL_UA, "Content-Type": "application/json", source: "agent" },
+        signal: ctrl.signal,
+        body: JSON.stringify({ binanceChainId: chainId, contractAddress, requestId: crypto.randomUUID() }),
+      });
+      if (!res.ok) return null;
+      const raw = (await res.json()) as { code?: string; data?: Record<string, unknown> };
+      const d = raw?.data;
+      if (!raw || raw.code !== "000000" || !d) return null;
+      const extra = (d.extraInfo ?? {}) as Record<string, unknown>;
+      return {
+        riskLevel: typeof d.riskLevelEnum === "string" ? d.riskLevelEnum : null,
+        riskScore: typeof d.riskLevel === "number" ? d.riskLevel : null,
+        buyTax: extra.buyTax != null ? String(extra.buyTax) : null,
+        sellTax: extra.sellTax != null ? String(extra.sellTax) : null,
+        isVerified: typeof extra.isVerified === "boolean" ? extra.isVerified : null,
+      };
+    } finally {
+      clearTimeout(t);
+    }
+  } catch {
+    return null;
   }
 }
 

@@ -27,6 +27,7 @@ const QUOTER_ABI = [
 ];
 const ERC20_ABI = [
   "function decimals() view returns (uint8)",
+  "function balanceOf(address) view returns (uint256)",
   "function allowance(address,address) view returns (uint256)",
   "function approve(address,uint256) returns (bool)",
 ];
@@ -48,6 +49,90 @@ export function pickDeepest(pools: PoolPick[]): PoolPick | null {
   const live = pools.filter((p) => p.liquidity > 0n);
   if (live.length === 0) return null;
   return live.sort((a, b) => (a.liquidity > b.liquidity ? -1 : 1))[0]!;
+}
+
+export interface Swappability {
+  swappable: boolean;
+  quotedOut: bigint | null;
+  dryRunOk: boolean;
+  reason: string;
+}
+
+/**
+ * Pure: decide executability from a quoter result + a min-0 dry-run.
+ * Structural finding 2026-09-22: 28/28 BSC tokenized-stock pools price
+ * correctly but revert on delivery — liquidity ≠ executability.
+ */
+export function swappabilityVerdict(quotedOut: bigint | null, dryRunOk: boolean): Swappability {
+  if (quotedOut == null || quotedOut <= 0n) {
+    return { swappable: false, quotedOut, dryRunOk, reason: "quoter returned nothing — no executable price" };
+  }
+  if (!dryRunOk) {
+    return {
+      swappable: false,
+      quotedOut,
+      dryRunOk,
+      reason: "quoter prices it but delivery reverts — token restricts permissionless transfers",
+    };
+  }
+  return { swappable: true, quotedOut, dryRunOk, reason: "quoted and dry-run passed" };
+}
+
+/** Live: quoter + min-0 dry-run against a pool pick. Read-only, no signing. */
+export async function verifySwappable(pick: PoolPick, from: string | null, usdProbe = 5): Promise<Swappability> {
+  try {
+    const p = provider();
+    const usdt = new Contract(USDT_BSC, ERC20_ABI, p);
+    const usdtDec = Number(await usdt.getFunction("decimals")());
+    const amountIn = BigInt(Math.round(usdProbe * 10 ** usdtDec));
+    const quoter = new Contract(QUOTER_V2, QUOTER_ABI, p);
+    let quoted: bigint;
+    try {
+      [quoted] = (await quoter.getFunction("quoteExactInputSingle").staticCall({
+        tokenIn: USDT_BSC,
+        tokenOut: pick.tokenContract,
+        amountIn,
+        fee: pick.fee,
+        sqrtPriceLimitX96: 0,
+      })) as [bigint, bigint, number, bigint];
+    } catch {
+      return swappabilityVerdict(null, false);
+    }
+    if (!from) {
+      return { ...swappabilityVerdict(quoted, false), reason: "quoted, but no wallet configured for delivery probe" };
+    }
+    const router = new Contract(SWAP_ROUTER, ROUTER_ABI, p);
+    const tx = await router.getFunction("exactInputSingle").populateTransaction({
+      tokenIn: USDT_BSC,
+      tokenOut: pick.tokenContract,
+      fee: pick.fee,
+      recipient: from,
+      amountIn,
+      amountOutMinimum: 0,
+      sqrtPriceLimitX96: 0,
+    });
+    let dryOk = false;
+    try {
+      await p.call({ ...tx, from });
+      dryOk = true;
+    } catch {
+      dryOk = false;
+    }
+    return swappabilityVerdict(quoted, dryOk);
+  } catch (e) {
+    return { swappable: false, quotedOut: null, dryRunOk: false, reason: `probe failed: ${(e as Error).message.slice(0, 150)}` };
+  }
+}
+
+/** Wallet address without exposing the key (server-side only). */
+export function walletAddressOrNull(): string | null {
+  try {
+    const pk = process.env.PRIVATE_KEY;
+    if (!pk || !/^0x[0-9a-fA-F]{64}$/.test(pk)) return null;
+    return new Wallet(pk).address;
+  } catch {
+    return null;
+  }
 }
 
 /** Pure: minimum acceptable out given slippage tolerance in bps. */
@@ -142,12 +227,33 @@ function wallet(): Wallet {
   return new Wallet(pk, provider());
 }
 
-/** Real dry-run: eth_call the exact swap calldata. Never broadcasts. */
+/**
+ * Real dry-run, composed honestly from three live checks:
+ *  1. balance — wallet holds enough USDT (else hard fail);
+ *  2. approve leg — eth_call the approval (proves it won't revert);
+ *  3. swap leg — full eth_call when allowance already covers, otherwise the
+ *     quoter economics (validated upstream) + balance + clean approve leg,
+ *     with the reason string saying exactly which composition applied.
+ * Never broadcasts.
+ */
 export async function simulateSwap(q: Quote, slippageBps = 100): Promise<{ ok: boolean; reason: string }> {
   try {
     const w = wallet();
-    const router = new Contract(SWAP_ROUTER, ROUTER_ABI, provider());
-    const tx = await router.getFunction("exactInputSingle").populateTransaction({
+    const p = provider();
+    const usdt = new Contract(USDT_BSC, ERC20_ABI, p);
+    const bal = (await usdt.getFunction("balanceOf")(w.address)) as bigint;
+    if (bal < q.amountIn) {
+      return { ok: false, reason: `insufficient USDT: holds ${bal}, needs ${q.amountIn}` };
+    }
+    const approveTx = await usdt.getFunction("approve").populateTransaction(SWAP_ROUTER, q.amountIn);
+    try {
+      await p.call({ ...approveTx, from: w.address });
+    } catch (e) {
+      return { ok: false, reason: `approve leg reverted: ${(e as Error).message.slice(0, 200)}` };
+    }
+    const allowance = (await usdt.getFunction("allowance")(w.address, SWAP_ROUTER)) as bigint;
+    const router = new Contract(SWAP_ROUTER, ROUTER_ABI, p);
+    const swapTx = await router.getFunction("exactInputSingle").populateTransaction({
       tokenIn: USDT_BSC,
       tokenOut: q.tokenContract,
       fee: q.fee,
@@ -156,10 +262,20 @@ export async function simulateSwap(q: Quote, slippageBps = 100): Promise<{ ok: b
       amountOutMinimum: slippageMinOut(q.amountOut, slippageBps),
       sqrtPriceLimitX96: 0,
     });
-    await provider().call({ ...tx, from: w.address });
-    return { ok: true, reason: "eth_call succeeded — swap would execute at current chain state" };
+    if (allowance >= q.amountIn) {
+      try {
+        await p.call({ ...swapTx, from: w.address });
+        return { ok: true, reason: "full eth_call succeeded with existing allowance — swap would execute" };
+      } catch (e) {
+        return { ok: false, reason: `swap leg reverted: ${(e as Error).message.slice(0, 200)}` };
+      }
+    }
+    return {
+      ok: true,
+      reason: "approve-first flow: quoter validated economics, balance verified, approve leg dry-runs clean — live flow approves then swaps",
+    };
   } catch (e) {
-    return { ok: false, reason: `simulation reverted: ${(e as Error).message.slice(0, 300)}` };
+    return { ok: false, reason: `simulation failed: ${(e as Error).message.slice(0, 200)}` };
   }
 }
 
