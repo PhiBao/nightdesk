@@ -113,5 +113,17 @@
   fetcher (live RWA numbers injected into the job prompt; LLM narrates, fixed
   code signs). `negotiate` verified locally (signed 0.1 U quote). Platform
   deploy + ERC-8004 blocked on founder: GitHub device auth + testnet tBNB/U.
+
+## 2026-09-22 — agent deployed + verified (testnet trial)
+- Faucet landed (0.1 tBNB + 5 U), `bag deploy --provider bnb` succeeded first
+  try: runtime `nightdeskseller`, AgentId `01M34DSYKGTMQ4QQ1EFQE99T1V`, 48h clock.
+- `bag deploy verify`: trial running + ERC-8004 agent_id 2460 (gasless relay);
+  note it correctly redirects `bag erc8004 register` (self-pay) to verify flow.
+- Remote `negotiate` verified with the operator's documented curl (signed 0.1 U
+  quote). Debugging notes: first invoke 503s during cold boot (documented, wait
+  + retry); my Python urllib client got 503s where curl succeeded — transport
+  quirk, not a runtime fault (runtime logs showed it serving throughout); `bag
+  deploy logs` is the right first stop. x402 rail returns gateway 404
+  (unverified) — worth saying in the DX report as a rough edge.
 - Safety loop closed live: kill-switch (`data/HALT`) gates `/api/fill`; leftover
   router approval revoked on-chain (`0xc1a14d…1978`, allowance now 0).
