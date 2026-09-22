@@ -81,3 +81,10 @@
   chain does. Judges can verify: any `eth_call` of the quoted calldata reverts.
 - Also wired (keyless): on-chain DEX volume (`dynamic/info`, real buy/sell split —
   replaces misleading `volume24h`) + token security audit on the best venue.
+
+## 2026-09-22 — SPCXB spot-check (same structural block)
+- SPCXB (`0xbe9d…3103e1`, type=3): 3 liquid USDT pools (fee-500 liq 3.2e22,
+  fee-2500 liq 2.1e24, fee-10000 liq 2.7e19). Quoter prices $10 → ~0.065 SPCXB
+  (~$153/token) on all three — delivery reverts on all three (minOut=0).
+  Deepest pool in the scan so far, same verdict: priced, not deliverable.
+  All probes read-only; no gas spent, wallet funds untouched.
