@@ -96,3 +96,14 @@
 - Open science question for later (needs explicit approval, moves funds): a dust
   wallet-to-wallet transfer probe to test whether the delivery block is
   pool-specific or a global transfer lock.
+
+## 2026-09-22 — probe result: EOA→EOA works, pool→EOA doesn't
+- Withdrawal verified: `0x9cb6…fdd1` (status 1, block 0x75a55fd) from Binance hot
+  wallet `0x8894…2d4e` into SPCXB contract — the mint/delivery rail works.
+- Dust self-transfer probe (1e-6 SPCXB, wallet→self): dry-run PASS → broadcast →
+  mined status 1 at block 123361771:
+  `0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433`
+- Refined verdict: the token moves fine between wallets; only AMM pool settlement
+  to retail wallets reverts. Mechanism unknown (likely pool sender not cleared by
+  the token's transfer gate), but the empirical boundary is now precise: hold and
+  move = yes, permissionless swap = no.

@@ -26,6 +26,11 @@ Stack: RWA Data + Market (dynamic V2) + TypeSafe guard · Trading/Transaction wi
   `0x4Ba1e9e275EF61B56C99532D0066506436201D73` holds **0.080079 SPCXB**
   (SpaceX bStocks, `0xbe9d…3103e1`) + 10.29 USDT — withdrawn from Binance to BSC,
   verified via `balanceOf`: https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73
+  - Withdrawal delivery: https://bscscan.com/tx/0x9cb6af7ec8be38b5f79840e04c882cda30e98cd0ce8602416570c0a9ec3afdd1
+    (status 1 — Binance hot wallet → SPCXB contract)
+  - Transfer probe (dust self-transfer, status 1, block 123361771):
+    https://bscscan.com/tx/0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433
+    — proves EOA↔EOA movement works while AMM pool delivery reverts
 - Delivery block (all 28 pools + 3 SPCXB pools): `POST /api/fill` paper returns live
   quote + reverted delivery simulation + `executability.swappable=false`
 - BSC tx hashes: (withdraw hash — paste from Binance history)
