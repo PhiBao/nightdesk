@@ -50,3 +50,19 @@
   names the next step, instead of faking a dry-run. Key present but unwired is
   a separate explicit state.
 - `pnpm typecheck` clean, `vitest` 12/12, `next build` clean (5 routes).
+
+## 2026-09-22 — live execution leg (Pancake V3, burner wallet)
+- Wallet verified ( PRIVATE_KEY in gitignored `.env`): `0x4Ba1…1D73`, BSC 56,
+  0.001498 BNB (gas for several txs), **0 USDT — no fill possible until funded**.
+- Caught my own bad memory twice: guessed V3 factory had 41 hex chars (RPC
+  rejected), guessed QuoterV2 wrong (code probe). Fixed by reading official
+  `pancake-v3-contracts/deployments/bscMainnet.json` from GitHub. Lesson for the
+  report: never hardcode DEX addresses from memory; copy from deployments repo
+  and assert `eth_getCode` + `decimals()` at boot.
+- Pool truth (on-chain `getPool` × 4 fees × 3 venues): NVDAx/USDT has NO pool
+  (Binance's NVDAx price is aggregated, not V3-executable); NVDAon fee-100 alive
+  (liq 4.46e19); NVDAB fee-2500 deepest (liq 1.58e22). Resolver picks deepest.
+- `POST /api/fill` paper for NVDA $5: quoted NVDAB $5 → ~0.022 tokens, `eth_call`
+  simulation executed real logic and reverted for the real reason (0 USDT).
+  Refusal path (no funds / over cap / sim-fail) verified live.
+- Env gotcha: `/proc`-scan kill loops hang this shell — use `ss -ltnp` + direct PID.

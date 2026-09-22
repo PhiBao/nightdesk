@@ -31,6 +31,15 @@ conservative after hours) so the demo never dies.
 - `POST /api/guard { ticker, text }` → live quote + guard verdict + recommended action
 - `POST /api/limits { ticker, sizeUsd }` → arms a limit-at-reference intent (paper until Transaction API key)
 - `GET /api/alerts` + `POST /api/alerts { ticker, note? }` → alert-at-open, re-evaluated against live truth
+- `POST /api/fill { ticker, usdAmount, slippageBps?, confirm? }` → paper: live V3 quote +
+  real `eth_call` simulation. `confirm:true`: LIVE broadcast, only under `MAX_LIVE_USD`
+
+## Execution (live path)
+
+Pool discovery is fully on-chain: RWA list → `getPool` across fee tiers → deepest
+non-zero liquidity wins. Verified 2026-09-22: NVDAx has NO USDT V3 pool (unroutable),
+NVDAon routes via fee-100, NVDAB via fee-2500 (deepest). V3 addresses copied from
+`pancake-v3-contracts/deployments/bscMainnet.json`, never from memory.
 
 ## Proof
 
