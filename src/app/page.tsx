@@ -201,7 +201,7 @@ export default function Page() {
         <label>
           Ticker{" "}
           <input
-            aria-label="Ticker"
+            id="ticker" aria-label="Ticker"
             value={ticker}
             onChange={(e) => setTicker(e.target.value.toUpperCase())}
             style={{ padding: 8, width: 100 }}
@@ -211,14 +211,14 @@ export default function Page() {
         <label style={{ flex: 1, minWidth: 240 }}>
           Intent{" "}
           <input
-            aria-label="Intent"
+            id="intent" aria-label="Intent"
             value={text}
             onChange={(e) => setText(e.target.value)}
             style={{ padding: 8, width: "100%" }}
             maxLength={500}
           />
         </label>
-        <button onClick={check} disabled={loading} style={{ padding: "8px 20px", cursor: "pointer" }}>
+        <button id="check-truth" onClick={check} disabled={loading} style={{ padding: "8px 20px", cursor: "pointer" }}>
           {loading ? "Checking…" : "Check truth"}
         </button>
       </div>
@@ -231,7 +231,7 @@ export default function Page() {
       {!quotes && !error && !loading && <p style={{ color: "#8b93a3" }}>Enter a ticker to see the live truth card.</p>}
 
       {best && (
-        <section aria-label="Truth card" style={{ border: "1px solid #2a3342", borderRadius: 12, padding: 16, marginTop: 8 }}>
+        <section id="truth-card" aria-label="Truth card" style={{ border: "1px solid #2a3342", borderRadius: 12, padding: 16, marginTop: 8 }}>
           <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
             <strong style={{ fontSize: 20 }}>{best.ticker}</strong>
             <span
@@ -275,7 +275,7 @@ export default function Page() {
       )}
 
       {verdict && (
-        <section aria-label="Guard verdict" style={{ border: "1px solid #2a3342", borderRadius: 12, padding: 16, marginTop: 12 }}>
+        <section id="guard-verdict" aria-label="Guard verdict" style={{ border: "1px solid #2a3342", borderRadius: 12, padding: 16, marginTop: 12 }}>
           <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>Guard verdict · {verdict.source}</h2>
           <p style={{ margin: "0 0 4px" }}>
             Action: <strong>{verdict.action}</strong> {verdict.blocked && <span>· market blocked</span>}
@@ -338,20 +338,20 @@ export default function Page() {
         </section>
       )}
 
-      <section aria-label="Holdings" style={{ border: "1px solid #2a3342", borderRadius: 12, padding: 16, marginTop: 12 }}>
+      <section id="holdings" aria-label="Holdings" style={{ border: "1px solid #2a3342", borderRadius: 12, padding: 16, marginTop: 12 }}>
         <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>Holdings</h2>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           <label>
             Address{" "}
             <input
-              aria-label="Address"
+              id="hold-addr" aria-label="Address"
               value={holdAddr}
               onChange={(e) => setHoldAddr(e.target.value)}
               style={{ padding: 8, width: 380, maxWidth: "100%" }}
               maxLength={42}
             />
           </label>
-          <button onClick={checkHoldings} disabled={acting} style={{ padding: "8px 16px", cursor: "pointer" }}>
+          <button id="check-holdings" onClick={checkHoldings} disabled={acting} style={{ padding: "8px 16px", cursor: "pointer" }}>
             Check holdings
           </button>
         </div>
