@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "NightDesk — session-aware tokenized-stock execution",
@@ -13,8 +14,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: "system-ui, sans-serif", margin: 0, background: "#0b0e14", color: "#e8ecf1" }}>
-        <main style={{ maxWidth: 880, margin: "0 auto", padding: "32px 20px 64px" }}>{children}</main>
+      <body className="bg-ink-900 text-mist-100 antialiased">
+        <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6 sm:pt-10">{children}</div>
       </body>
     </html>
   );

@@ -241,17 +241,39 @@ NightDesk becomes the execution-quality layer for on-chain equities.
 
 ---
 
-## 12. Run
+## 12. Run (judge instructions)
+
+No keys needed to evaluate: truth, guard (deterministic fallback), limits,
+alerts, holdings, and paper fills all work keyless. Live guard (TypeSafe) and
+live fills activate only with server-side env — never commit keys, never expose
+them to the browser.
+
+**Option A — Docker (recommended, zero Node setup):**
+
+```bash
+docker build -t nightdesk .
+docker run -p 3000:3000 nightdesk
+# open http://localhost:3000 — live data loads automatically
+```
+
+**Option B — pnpm:**
 
 ```bash
 pnpm install
-cp .env.example .env.local  # TYPESAFE_API_KEY (server-only); PRIVATE_KEY + MAX_LIVE_USD for live fills
-pnpm dev                    # http://localhost:3000
-pnpm test && pnpm typecheck && pnpm build
+pnpm build && pnpm start      # http://localhost:3000
+pnpm test && pnpm typecheck
 ```
 
-Without `TYPESAFE_API_KEY` the guard falls back deterministically (same shape).
-Without `PRIVATE_KEY`, `/api/fill` is paper-only. Keys never leave the server.
+**Option C — dev:**
+
+```bash
+cp .env.example .env.local  # optional: TYPESAFE_API_KEY for the live guard
+pnpm dev                    # http://localhost:3000
+```
+
+Without `TYPESAFE_API_KEY` the guard falls back deterministically (same shape,
+verdict labeled `fallback`). Without `PRIVATE_KEY`, `/api/fill` is paper-only.
+Keys never leave the server.
 
 ## License
 
