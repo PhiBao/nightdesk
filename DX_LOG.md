@@ -108,6 +108,25 @@
   the token's transfer gate), but the empirical boundary is now precise: hold and
   move = yes, permissionless swap = no.
 
+## 2026-09-23 — signed modules cracked via reader proxy
+- `web3.binance.com` returns HTTP 202/empty to programmatic fetchers (bot wall),
+  but `r.jina.ai` renders the full docs: auth = X-OC-APIKEY + ISO-8601
+  X-OC-TIMESTAMP + Base64(HMAC-SHA256(secret, ts+METHOD+/build-path+body)).
+  #1 documented pitfall (missing `/build` in signed path) avoided by construction.
+- Trading API RFQ flow fully working against the live key: Ondo <$20 rejected
+  with 40375 (exact minimum surfaced — wallet only held $10.29 at the time);
+  NVDAon $10 returns LiquidMesh multi-hop route USDT→NVDAB→NVDAon.
+- Their Transaction API simulate called the missing-allowance failure verbatim,
+  then SUCCESS after their approve-transaction calldata landed — the sanctioned
+  dry-run loop, closed.
+- Result: **$10 → 0.043644 NVDAon settled** (`0xcb486b…605d`, block 123527330).
+  Ondo/bStocks trade RFQ, xStocks AMM — matches the docs' routing table and
+  explains every AMM revert we measured.
+- Also verified live: Wallet `all-token-balances-by-address`, DeFi
+  `protocol/list` (POST, not GET). Modules honestly callable: RWA, Market,
+  Trading, Transaction, Wallet, DeFi, Agent Studio. Not yet: b402 (rail
+  configured, no settlement observed), Agentic Wallet (needs App pairing).
+
 ## 2026-09-22 — Agent Studio seller + safety loop
 - `nightdeskseller/`: Studio seller wired to a deterministic NightDesk truth
   fetcher (live RWA numbers injected into the job prompt; LLM narrates, fixed

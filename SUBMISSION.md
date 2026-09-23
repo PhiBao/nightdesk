@@ -31,6 +31,11 @@ Stack: RWA Data + Market (dynamic V2) + TypeSafe guard · Trading/Transaction wi
   - Transfer probe (dust self-transfer, status 1, block 123361771):
     https://bscscan.com/tx/0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433
     — proves EOA↔EOA movement works while AMM pool delivery reverts
+  - **Sanctioned-rail fill (the answer): $10 → 0.043644 NVDAon, status 1, block 123527330:**
+    https://bscscan.com/tx/0xcb486bf02608194d4544187ea132f37444f2f0f54232a355ff1e48eb23605d6f
+    — quoted + built via Trading API aggregator (LiquidMesh USDT→NVDAB→NVDAon),
+    predicted by Transaction API simulate, approved via approve-transaction
+    (`0x0a8682…351a664c`), settled on BSC
   - Approval hygiene: leftover 5-USDT router approval revoked on-chain
     (allowance now 0):
     https://bscscan.com/tx/0xc1a14d876e15320c8e332a5f9c409eb7c6e2302190859415078ae8429d197804

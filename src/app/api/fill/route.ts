@@ -54,7 +54,28 @@ export async function POST(req: Request) {
         ? await verifySwappable(pick, walletAddressOrNull())
         : { swappable: false, quotedOut: null, dryRunOk: false, reason: "no liquid pool found" };
       const executability = { ...exec, quotedOut: exec.quotedOut == null ? null : exec.quotedOut.toString() };
-      return NextResponse.json({ ok: true, mode: "paper", cap, quote, simulation: sim, executability });
+      // Best-effort: official aggregator RFQ quote (needs server keys; omitted keyless).
+      let aggregator: unknown = null;
+      if (pick) {
+        try {
+          const { tradingQuote } = await import("@/lib/binance");
+          const usdt = (await import("@/lib/swap")).USDT_BSC;
+          const routes = (await tradingQuote({
+            binanceChainId: "56",
+            amount: String(Math.round(usdAmount * 1e18)),
+            fromTokenAddress: usdt,
+            toTokenAddress: pick.tokenContract,
+            userWalletAddress: walletAddressOrNull() ?? "",
+          }));
+          const r0 = routes[0];
+          aggregator = r0
+            ? { vendor: r0.vendorName ?? r0.vendor, mode: r0.executionMode, out: String(r0.toTokenAmount ?? "") }
+            : { note: "no aggregator route" };
+        } catch {
+          aggregator = null;
+        }
+      }
+      return NextResponse.json({ ok: true, mode: "paper", cap, quote, simulation: sim, executability, aggregator });
     }
     if (halted()) {
       return NextResponse.json({ ok: false, error: "kill-switch engaged (data/HALT exists) — live broadcast refused" }, { status: 403 });

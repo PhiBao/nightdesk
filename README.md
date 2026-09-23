@@ -183,7 +183,8 @@ SUBMISSION.md       checklist + proof ledger
 - Withdrawal (Binance→wallet): `0x9cb6…fdd1` (status 1)
 - Transfer probe (dust self-transfer, block 123361771): `0xb0b71d…8943`
 - Approval + revoke: allowance 5 USDT mined → revoked to 0 (`0xc1a14d…1978`)
-- Holdings: 0.080079 SPCXB + 10.29 USDT at `0x4Ba1…1D73`
+- Holdings: 0.080079 SPCXB + 0.043644 NVDAon at `0x4Ba1…1D73`
+- Sanctioned-rail fill ($10 → NVDAon, block 123527330): `0xcb486b…605d`
 - Agent: ERC-8004 `agent_id=2460`, remote signed 0.1 U quote verified
 - Guard calibration: severity 0.25 @+27bps vs 1.74 @+180bps; stale 0.33 overnight vs 0.91 frozen weekend
 
