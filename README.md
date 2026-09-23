@@ -3,7 +3,7 @@
 > Friday 4pm ET: the reference freezes. The token doesn't.
 > Every screen shows you a price. None tells you what it means.
 
-**Live:** [app](https://nightdesk-psi.vercel.app) · [Agent card](https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json) (testnet trial) · [Demo wallet](https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73) · [Repo](https://github.com/PhiBao/nightdesk)
+**Live:** <a href="https://nightdesk-psi.vercel.app" target="_blank" rel="noreferrer">app</a> · <a href="https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json" target="_blank" rel="noreferrer">Agent card</a> (testnet trial) · <a href="https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73" target="_blank" rel="noreferrer">Demo wallet</a> · <a href="https://github.com/PhiBao/nightdesk" target="_blank" rel="noreferrer">Repo</a>
 
 Built for the **BNB Hack: Tokenized Stocks Edition** (BSC mainnet, spot only).
 
@@ -137,7 +137,7 @@ narrow judgments (intent/risk) and narration. Every claim has an audit trail
 | 10 tickers × Ondo/xStocks/bStocks × 4 fee tiers | 28 pools hold liquidity |
 | QuoterV2 pricing | 28/28 return sane prices |
 | `exactInputSingle` delivery dry-run (minOut=0) | **0/28 deliver — all revert** |
-| EOA→EOA transfer probe | **mined first try** ([`0xb0b71d…8943`](https://bscscan.com/tx/0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433)) |
+| EOA→EOA transfer probe | **mined first try** (<a href="https://bscscan.com/tx/0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433" target="_blank" rel="noreferrer">`0xb0b71d…8943`</a>) |
 | SPCXB spot-check (deepest pool, liq ~2e24) | priced $10→0.065, delivery reverts |
 
 Refined boundary: **hold and move = yes; permissionless AMM settlement = no.**
@@ -180,11 +180,11 @@ SUBMISSION.md       checklist + proof ledger
 
 ## 8. Proof ledger (all verifiable)
 
-- Withdrawal (Binance→wallet): [`0x9cb6…fdd1`](https://bscscan.com/tx/0x9cb6af7ec8be38b5f79840e04c882cda30e98cd0ce8602416570c0a9ec3afdd1) (status 1)
-- Transfer probe (dust self-transfer, block 123361771): [`0xb0b71d…8943`](https://bscscan.com/tx/0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433)
-- Approval + revoke: allowance 5 USDT mined → revoked to 0 ([`0xc1a14d…1978`](https://bscscan.com/tx/0xc1a14d876e15320c8e332a5f9c409eb7c6e2302190859415078ae8429d197804))
-- Holdings: 0.080079 SPCXB + 0.043644 NVDAon at [`0x4Ba1…1D73`](https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73)
-- Sanctioned-rail fill ($10 → NVDAon, block 123527330): [`0xcb486b…605d`](https://bscscan.com/tx/0xcb486bf02608194d4544187ea132f37444f2f0f54232a355ff1e48eb23605d6f)
+- Withdrawal (Binance→wallet): <a href="https://bscscan.com/tx/0x9cb6af7ec8be38b5f79840e04c882cda30e98cd0ce8602416570c0a9ec3afdd1" target="_blank" rel="noreferrer">`0x9cb6…fdd1`</a> (status 1)
+- Transfer probe (dust self-transfer, block 123361771): <a href="https://bscscan.com/tx/0xb0b71d55dfed25b702e73177104bd6013012176917c14cc753d34a28b5679433" target="_blank" rel="noreferrer">`0xb0b71d…8943`</a>
+- Approval + revoke: allowance 5 USDT mined → revoked to 0 (<a href="https://bscscan.com/tx/0xc1a14d876e15320c8e332a5f9c409eb7c6e2302190859415078ae8429d197804" target="_blank" rel="noreferrer">`0xc1a14d…1978`</a>)
+- Holdings: 0.080079 SPCXB + 0.043644 NVDAon at <a href="https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73" target="_blank" rel="noreferrer">`0x4Ba1…1D73`</a>
+- Sanctioned-rail fill ($10 → NVDAon, block 123527330): <a href="https://bscscan.com/tx/0xcb486bf02608194d4544187ea132f37444f2f0f54232a355ff1e48eb23605d6f" target="_blank" rel="noreferrer">`0xcb486b…605d`</a>
 - Agent: ERC-8004 `agent_id=2460`, remote signed 0.1 U quote verified
 - Guard calibration: severity 0.25 @+27bps vs 1.74 @+180bps; stale 0.33 overnight vs 0.91 frozen weekend
 
