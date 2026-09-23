@@ -126,9 +126,8 @@ export default function Page() {
   const [receipt, setReceipt] = useState<string | null>(null);
   const [intent, setIntent] = useState<LimitIntent | null>(null);
   const [alerts, setAlerts] = useState<Alert[] | null>(null);
-  const DEMO_WALLET = "0x4Ba1e9e275EF61B56C99532D0066506436201D73";
   const CZ_WALLET = "0x28C6c06298d514Db089934071355E5743bf21d60";
-  const [holdAddr, setHoldAddr] = useState(DEMO_WALLET);
+  const [holdAddr, setHoldAddr] = useState(CZ_WALLET);
   const [holdings, setHoldings] = useState<Holding[] | null>(null);
   const [holdScan, setHoldScan] = useState<string | null>(null);
   const autoStarted = useRef(false);
@@ -492,9 +491,6 @@ export default function Page() {
         </div>
         <div className="mt-2.5 flex flex-wrap gap-2 text-xs">
           <span className="self-center text-mist-500">Try:</span>
-          <button onClick={() => checkHoldings(DEMO_WALLET)} disabled={acting} className="rounded-full border border-ink-600 bg-ink-900/70 px-2.5 py-1 font-mono text-link-400 transition hover:border-link-400/40 disabled:opacity-50">
-            demo wallet · SPCXB inside
-          </button>
           <button onClick={() => checkHoldings(CZ_WALLET)} disabled={acting} className="rounded-full border border-ink-600 bg-ink-900/70 px-2.5 py-1 font-mono text-link-400 transition hover:border-link-400/40 disabled:opacity-50">
             CZ whale wallet
           </button>
