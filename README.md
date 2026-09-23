@@ -3,7 +3,7 @@
 > Friday 4pm ET: the reference freezes. The token doesn't.
 > Every screen shows you a price. None tells you what it means.
 
-**Live:** app (deploy link TBD) · [Agent card](https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json) (testnet trial) · [Demo wallet](https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73) · [Repo](https://github.com/PhiBao/nightdesk)
+**Live:** [app](https://nightdesk-psi.vercel.app) · [Agent card](https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json) (testnet trial) · [Demo wallet](https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73) · [Repo](https://github.com/PhiBao/nightdesk)
 
 Built for the **BNB Hack: Tokenized Stocks Edition** (BSC mainnet, spot only).
 
