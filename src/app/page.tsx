@@ -126,7 +126,9 @@ export default function Page() {
   const [receipt, setReceipt] = useState<string | null>(null);
   const [intent, setIntent] = useState<LimitIntent | null>(null);
   const [alerts, setAlerts] = useState<Alert[] | null>(null);
-  const [holdAddr, setHoldAddr] = useState("0x4Ba1e9e275EF61B56C99532D0066506436201D73");
+  const DEMO_WALLET = "0x4Ba1e9e275EF61B56C99532D0066506436201D73";
+  const CZ_WALLET = "0x28C6c06298d514Db089934071355E5743bf21d60";
+  const [holdAddr, setHoldAddr] = useState(DEMO_WALLET);
   const [holdings, setHoldings] = useState<Holding[] | null>(null);
   const [holdScan, setHoldScan] = useState<string | null>(null);
   const autoStarted = useRef(false);
@@ -208,11 +210,13 @@ export default function Page() {
     }
   }
 
-  async function checkHoldings() {
+  async function checkHoldings(override?: string) {
+    const addr = (override ?? holdAddr).trim();
+    if (override) setHoldAddr(addr);
     setActing(true);
     setReceipt(null);
     try {
-      const r = await fetch(`/api/holdings?address=${encodeURIComponent(holdAddr.trim())}`);
+      const r = await fetch(`/api/holdings?address=${encodeURIComponent(addr)}`);
       const j = (await r.json()) as { ok: boolean; holdings?: Holding[]; bscscan?: string; error?: string };
       if (!j.ok) throw new Error(j.error ?? "holdings failed");
       setHoldings(j.holdings ?? []);
@@ -482,8 +486,17 @@ export default function Page() {
             <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-mist-500">BSC address</span>
             <input id="hold-addr" aria-label="Address" value={holdAddr} onChange={(e) => setHoldAddr(e.target.value)} className={`${inputCls} w-full font-mono text-xs`} maxLength={42} placeholder="0x…" />
           </label>
-          <button id="check-holdings" onClick={checkHoldings} disabled={acting} className={`${btnGhost} whitespace-nowrap`}>
+          <button id="check-holdings" onClick={() => checkHoldings()} disabled={acting} className={`${btnGhost} whitespace-nowrap`}>
             Check holdings
+          </button>
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-2 text-xs">
+          <span className="self-center text-mist-500">Try:</span>
+          <button onClick={() => checkHoldings(DEMO_WALLET)} disabled={acting} className="rounded-full border border-ink-600 bg-ink-900/70 px-2.5 py-1 font-mono text-link-400 transition hover:border-link-400/40 disabled:opacity-50">
+            demo wallet · SPCXB inside
+          </button>
+          <button onClick={() => checkHoldings(CZ_WALLET)} disabled={acting} className="rounded-full border border-ink-600 bg-ink-900/70 px-2.5 py-1 font-mono text-link-400 transition hover:border-link-400/40 disabled:opacity-50">
+            CZ whale wallet
           </button>
         </div>
         {holdings && (

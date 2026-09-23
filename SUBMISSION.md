@@ -48,4 +48,4 @@ Stack: RWA Data + Market (dynamic V2) + TypeSafe guard · Trading/Transaction wi
   quote + reverted delivery simulation + `executability.swappable=false`
 - BSC tx hashes: (withdraw hash — paste from Binance history)
 - Deployed link: https://nightdesk-psi.vercel.app (Vercel prod, TYPESAFE_API_KEY configured — live guard)
-- Demo video link: (upload `~/demo-video-template/videos/nightdesk/out/nightdesk.mp4` — 100s, 1080p, subtitled — as unlisted YouTube, paste link here)
+- Demo video link: https://youtu.be/N-KIcmmdEZE
