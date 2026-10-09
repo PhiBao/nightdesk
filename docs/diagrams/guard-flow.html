@@ -37,7 +37,7 @@
     <h1>One intent, one batched judgment</h1>
 
     <div class="diagram-container">
-      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="guard-flow-title guard-flow-desc">
+      <svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="guard-flow-title guard-flow-desc">
         <title id="guard-flow-title">NightDesk guard sequence</title>
         <desc id="guard-flow-desc">A plain-English buy intent flows from the user through the app to the truth route and the guard, which asks TypeSafe Jev one batched call and returns a routed action.</desc>
         <defs>
@@ -45,7 +45,13 @@
           <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#34d399"/></marker>
         </defs>
 
-        <rect width="960" height="600" fill="#0b0e14"/>
+        <rect width="960" height="640" fill="#0b0e14"/>
+
+        <!-- ── diagram title ───────────────────────────────────── -->
+        <text x="40" y="44" fill="#5c6577" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">NIGHTDESK · GUARD FLOW</text>
+        <text x="40" y="72" fill="#e8ecf1" font-size="22" font-family="'Instrument Serif', serif">One intent, one batched judgment</text>
+
+        <g transform="translate(0, 40)">
 
         <!-- ── lifelines (drawn before actors) ─────────────────── -->
         <line x1="130" y1="168" x2="130" y2="520" stroke="rgba(232,236,241,0.16)" stroke-width="1" stroke-dasharray="4,4"/>
@@ -137,6 +143,7 @@
         <text x="296" y="566" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">Response</text>
         <line x1="410" y1="562" x2="438" y2="562" stroke="#34d399" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
         <text x="446" y="566" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">Headline verdict</text>
+        </g>
       </svg>
     </div>
   </div>

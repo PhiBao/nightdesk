@@ -3,7 +3,7 @@
 > Friday 4pm ET: the reference freezes. The token doesn't.
 > Every screen shows you a price. None tells you what it means.
 
-**Live:** <a href="https://nightdesk-psi.vercel.app" target="_blank" rel="noreferrer">app</a> · <a href="https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json" target="_blank" rel="noreferrer">Agent card</a> (testnet trial) · <a href="https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73" target="_blank" rel="noreferrer">Demo wallet</a> · <a href="https://github.com/PhiBao/nightdesk" target="_blank" rel="noreferrer">Repo</a>
+**Live:** <a href="https://nightdesk-psi.vercel.app" target="_blank" rel="noreferrer">app</a> · <a href="https://youtu.be/N-KIcmmdEZE" target="_blank" rel="noreferrer">demo video (100 s)</a> · <a href="https://bscscan.com/address/0x4Ba1e9e275EF61B56C99532D0066506436201D73" target="_blank" rel="noreferrer">demo wallet</a> · <a href="https://github.com/PhiBao/nightdesk" target="_blank" rel="noreferrer">repo</a> · <a href="https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json" target="_blank" rel="noreferrer">agent card</a> (48 h testnet trial — platform limit, archived Sept 24; escrow evidence in §8)
 
 Built for the **BNB Hack: Tokenized Stocks Edition** (BSC mainnet, spot only).
 

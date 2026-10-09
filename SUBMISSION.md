@@ -39,7 +39,7 @@ Stack: RWA Data + Market (dynamic V2) + TypeSafe guard · Trading/Transaction wi
   - Approval hygiene: leftover 5-USDT router approval revoked on-chain
     (allowance now 0):
     <a href="https://bscscan.com/tx/0xc1a14d876e15320c8e332a5f9c409eb7c6e2302190859415078ae8429d197804" target="_blank" rel="noreferrer">https://bscscan.com/tx/0xc1a14d876e15320c8e332a5f9c409eb7c6e2302190859415078ae8429d197804</a>
-- AGENT (live, testnet trial ~48h from 2026-09-22 ~11:25 UTC):
+- AGENT (testnet trial, 48 h from 2026-09-22 ~11:25 UTC — platform limit; **trial archived Sept 24, card now returns 410**):
   - A2A card: <a href="https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json" target="_blank" rel="noreferrer">https://bnbagent-api.bnbchain.world/v1/rt/01M34DSYKGTMQ4QQ1EFQE99T1V/.well-known/agent-card.json</a>
   - ERC-8004: agent_id 2460, wallet `0xCBF4…9640C` (gasless operator relay)
   - Remote `negotiate` verified: signed 0.1 U quote for "NVDA weekend spread report"

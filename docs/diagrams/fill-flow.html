@@ -37,14 +37,20 @@
     <h1>Nothing broadcasts without a passing dry-run</h1>
 
     <div class="diagram-container">
-      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fill-flow-title fill-flow-desc">
+      <svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fill-flow-title fill-flow-desc">
         <title id="fill-flow-title">NightDesk fill flow</title>
         <desc id="fill-flow-desc">A live quote is simulated; failures are refused with a reason and passes continue through cap and kill-switch checks to a capped broadcast, either through a full dry-run or an approve-first flow.</desc>
         <defs>
           <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8b93a3"/></marker>
         </defs>
 
-        <rect width="960" height="600" fill="#0b0e14"/>
+        <rect width="960" height="640" fill="#0b0e14"/>
+
+        <!-- ── diagram title ───────────────────────────────────── -->
+        <text x="40" y="44" fill="#5c6577" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">NIGHTDESK · FILL FLOW</text>
+        <text x="40" y="72" fill="#e8ecf1" font-size="22" font-family="'Instrument Serif', serif">Nothing broadcasts without a passing dry-run</text>
+
+        <g transform="translate(0, 40)">
 
         <!-- ── arrows (before nodes) ───────────────────────────── -->
 
@@ -120,6 +126,7 @@
         <rect x="380" y="508" width="200" height="44" rx="20" fill="rgba(52,211,153,0.08)" stroke="#34d399" stroke-width="1.2"/>
         <text x="480" y="527" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Broadcast</text>
         <text x="480" y="543" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">capped live fill</text>
+        </g>
       </svg>
     </div>
   </div>

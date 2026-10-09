@@ -48,7 +48,7 @@
     <h1>Session-aware execution, end to end</h1>
 
     <div class="diagram-container">
-      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="architecture-title architecture-desc">
+      <svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="architecture-title architecture-desc">
         <title id="architecture-title">NightDesk architecture</title>
         <desc id="architecture-desc">Browser and agent callers reach the Next.js app on Vercel, whose API routes read public feeds, the TypeSafe model, and BSC; the key store stays server-side, and a separate Agent Studio seller serves other agents.</desc>
         <defs>
@@ -56,7 +56,13 @@
           <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#34d399"/></marker>
         </defs>
 
-        <rect width="960" height="600" fill="#0b0e14"/>
+        <rect width="960" height="640" fill="#0b0e14"/>
+
+        <!-- ── diagram title ───────────────────────────────────── -->
+        <text x="40" y="44" fill="#5c6577" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">NIGHTDESK · ARCHITECTURE</text>
+        <text x="40" y="72" fill="#e8ecf1" font-size="22" font-family="'Instrument Serif', serif">Session-aware execution, end to end</text>
+
+        <g transform="translate(0, 40)">
 
         <!-- ── zones (drawn first) ─────────────────────────────── -->
         <rect x="40" y="84" width="836" height="240" rx="8" fill="rgba(232,236,241,0.02)" stroke="rgba(232,236,241,0.10)" stroke-width="0.8"/>
@@ -215,6 +221,7 @@
 
         <line x1="760" y1="558" x2="788" y2="558" stroke="#34d399" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
         <text x="796" y="561" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">Headline path</text>
+        </g>
       </svg>
     </div>
   </div>
