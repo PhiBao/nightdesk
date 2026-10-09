@@ -78,51 +78,13 @@ The wedge is the weekend gap the sponsors opened the brief with.
 
 ## 4. Architecture
 
-```mermaid
-flowchart TD
-    U["User / Judge"] --> APP["Next.js App (Vercel)"]
-    APP --> TRUTH["GET /api/truth"]
-    APP --> GUARD["POST /api/guard"]
-    APP --> ACT["POST /api/limits, /api/alerts, /api/fill, /api/revoke"]
-    APP --> HOLD["GET /api/holdings"]
-    TRUTH --> RWA["Binance RWA Data API (public)"]
-    TRUTH --> WEB3["Web3 market + audit APIs (public)"]
-    GUARD --> JEV["TypeSafe Jev (server-only)"]
-    GUARD --> FALLBACK["Deterministic fallback (no key)"]
-    ACT --> POOLS["Pancake V3 on-chain reads"]
-    ACT --> KEYS["Server-side keys (never browser)"]
-    HOLD --> BSC["BSC public RPC"]
-    SELLER["Agent Studio seller (testnet)"] --> RWA
-    BUYER["Other agents"] -->|ERC-8183 / x402| SELLER
-```
+![NightDesk architecture](docs/diagrams/architecture.png)
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant A as App
-    participant T as /api/truth
-    participant G as /api/guard
-    participant J as Jev
-    U->>A: "Buy $200 NVDA, don't overpay"
-    A->>T: GET ?ticker=NVDA
-    T-->>A: 3 venues, spreads, badges
-    A->>G: POST {ticker, text}
-    G->>J: 1 call, 4 parallel questions
-    J-->>G: limit_at_reference (0.85)
-    G-->>A: action + block flags
-    A->>U: Arm limit / Alert at open
-```
+![Guard flow — one intent, one batched judgment](docs/diagrams/guard-flow.png)
 
-```mermaid
-flowchart LR
-    Q["Live quote (QuoterV2)"] --> SIM["eth_call simulation"]
-    SIM -->|pass| CAP["Cap + kill-switch + confirm"]
-    SIM -->|fail| REFUSE["Refuse with reason"]
-    CAP -->|allowance ok| FULL["Full dry-run"]
-    CAP -->|approve-first| COMP["Quoter + balance + approve leg"]
-    FULL --> LIVE["Broadcast (capped)"]
-    COMP --> LIVE
-```
+![Fill flow — nothing broadcasts without a passing dry-run](docs/diagrams/fill-flow.png)
+
+*(Editable sources: `docs/diagrams/*.html`; rendered PNGs are committed alongside.)*
 
 **Design rules:** code owns math, policy, keys, signing. Models supply
 narrow judgments (intent/risk) and narration. Every claim has an audit trail

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NightDesk — Fill flow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #0b0e14;
+      --color-ink:     #e8ecf1;
+      --color-muted:   #8b93a3;
+      --color-accent:  #34d399;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans); background: var(--color-paper); color: var(--color-ink);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem;
+    }
+    .frame { max-width: 1000px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 0.5rem;
+    }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem); font-weight: 400; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Fill flow · NightDesk</p>
+    <h1>Nothing broadcasts without a passing dry-run</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fill-flow-title fill-flow-desc">
+        <title id="fill-flow-title">NightDesk fill flow</title>
+        <desc id="fill-flow-desc">A live quote is simulated; failures are refused with a reason and passes continue through cap and kill-switch checks to a capped broadcast, either through a full dry-run or an approve-first flow.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8b93a3"/></marker>
+        </defs>
+
+        <rect width="960" height="600" fill="#0b0e14"/>
+
+        <!-- ── arrows (before nodes) ───────────────────────────── -->
+
+        <!-- quote → diamond -->
+        <path d="M 480,168 V 208" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+        <!-- diamond → refuse (fail, left) -->
+        <path d="M 396,246 H 286" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="320" y="230" width="44" height="12" rx="3" fill="#0b0e14"/>
+        <text x="342" y="239" fill="#8b93a3" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">FAIL</text>
+
+        <!-- diamond → checks (pass, down) -->
+        <path d="M 480,284 V 300" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="486" y="286" width="44" height="12" rx="3" fill="#0b0e14"/>
+        <text x="508" y="295" fill="#8b93a3" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">PASS</text>
+
+        <!-- checks → full dry-run (allowance ok) -->
+        <path d="M 415,356 V 392" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="330" y="364" width="112" height="12" rx="3" fill="#0b0e14"/>
+        <text x="386" y="373" fill="#8b93a3" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ALLOWANCE OK</text>
+
+        <!-- checks → approve-first -->
+        <path d="M 570,356 V 392" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="578" y="364" width="102" height="12" rx="3" fill="#0b0e14"/>
+        <text x="629" y="373" fill="#8b93a3" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">APPROVE-FIRST</text>
+
+        <!-- full dry-run → broadcast -->
+        <path d="M 385,440 V 476 Q 385,484 393,484 H 447 Q 455,484 455,492 V 508" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+        <!-- approve-first → broadcast -->
+        <path d="M 600,440 V 476 Q 600,484 592,484 H 513 Q 505,484 505,492 V 508" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+        <!-- ── nodes ───────────────────────────────────────────── -->
+
+        <!-- live quote (step) -->
+        <rect x="380" y="120" width="200" height="48" rx="6" fill="#0b0e14"/>
+        <rect x="380" y="120" width="200" height="48" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <text x="480" y="142" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Live quote</text>
+        <text x="480" y="158" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">QuoterV2 · Pancake V3</text>
+
+        <!-- decision: simulation (accent) -->
+        <polygon points="480,208 564,246 480,284 396,246" fill="#0b0e14"/>
+        <polygon points="480,208 564,246 480,284 396,246" fill="rgba(52,211,153,0.08)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="480" y="244" fill="#e8ecf1" font-size="11" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">dry-run</text>
+        <text x="480" y="257" fill="#8b93a3" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">simulate</text>
+
+        <!-- refuse (end, oval) -->
+        <rect x="110" y="224" width="176" height="44" rx="20" fill="#0b0e14"/>
+        <rect x="110" y="224" width="176" height="44" rx="20" fill="rgba(232,236,241,0.03)" stroke="rgba(232,236,241,0.28)" stroke-width="1"/>
+        <text x="198" y="243" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Refuse</text>
+        <text x="198" y="259" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">with the reason</text>
+
+        <!-- checks (step) -->
+        <rect x="380" y="308" width="200" height="48" rx="6" fill="#0b0e14"/>
+        <rect x="380" y="308" width="200" height="48" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <text x="480" y="330" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Cap · kill-switch · confirm</text>
+        <text x="480" y="346" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">hard limits first</text>
+
+        <!-- full dry-run (step) -->
+        <rect x="300" y="392" width="170" height="48" rx="6" fill="#0b0e14"/>
+        <rect x="300" y="392" width="170" height="48" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <text x="385" y="414" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Full dry-run</text>
+        <text x="385" y="430" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">swap eth_call</text>
+
+        <!-- approve-first (step) -->
+        <rect x="515" y="392" width="170" height="48" rx="6" fill="#0b0e14"/>
+        <rect x="515" y="392" width="170" height="48" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <text x="600" y="414" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Approve-first</text>
+        <text x="600" y="430" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">approve → swap</text>
+
+        <!-- broadcast (end, oval, accent) -->
+        <rect x="380" y="508" width="200" height="44" rx="20" fill="#0b0e14"/>
+        <rect x="380" y="508" width="200" height="44" rx="20" fill="rgba(52,211,153,0.08)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="480" y="527" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Broadcast</text>
+        <text x="480" y="543" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">capped live fill</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

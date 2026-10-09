@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NightDesk — Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #0b0e14;
+      --color-ink:     #e8ecf1;
+      --color-muted:   #8b93a3;
+      --color-accent:  #34d399;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1000px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif); font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 1.5rem;
+    }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · NightDesk</p>
+    <h1>Session-aware execution, end to end</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="architecture-title architecture-desc">
+        <title id="architecture-title">NightDesk architecture</title>
+        <desc id="architecture-desc">Browser and agent callers reach the Next.js app on Vercel, whose API routes read public feeds, the TypeSafe model, and BSC; the key store stays server-side, and a separate Agent Studio seller serves other agents.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8b93a3"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#34d399"/></marker>
+        </defs>
+
+        <rect width="960" height="600" fill="#0b0e14"/>
+
+        <!-- ── zones (drawn first) ─────────────────────────────── -->
+        <rect x="40" y="84" width="836" height="240" rx="8" fill="rgba(232,236,241,0.02)" stroke="rgba(232,236,241,0.10)" stroke-width="0.8"/>
+        <rect x="52" y="88" width="152" height="12" rx="2" fill="#0b0e14"/>
+        <text x="128" y="97" fill="#5c6577" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.18em">APP · VERCEL</text>
+
+        <rect x="88" y="356" width="784" height="112" rx="8" fill="rgba(232,236,241,0.02)" stroke="rgba(232,236,241,0.10)" stroke-width="0.8"/>
+        <rect x="100" y="360" width="122" height="12" rx="2" fill="#0b0e14"/>
+        <text x="161" y="369" fill="#5c6577" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.18em">EXTERNAL FEEDS</text>
+
+        <!-- ── arrows (before nodes) ───────────────────────────── -->
+
+        <!-- user → app -->
+        <path d="M 376,140 H 400" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- app → truth (straight) -->
+        <path d="M 412,172 V 196 Q 412,204 404,204 H 200 Q 192,204 192,212 V 236" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- app → guard (accent, headline path) -->
+        <path d="M 440,172 V 208 Q 440,216 432,216 H 392 Q 384,216 384,224 V 236" fill="none" stroke="#34d399" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <!-- app → fill -->
+        <path d="M 468,172 V 220 Q 468,228 476,228 H 568 Q 576,228 576,236" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- app → holdings -->
+        <path d="M 496,172 V 184 Q 496,192 504,192 H 760 Q 768,192 768,200 V 236" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- fill → key store -->
+        <path d="M 492,268 H 148 Q 140,268 140,260 V 176" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- truth → public APIs -->
+        <path d="M 192,300 V 344 Q 192,352 200,352 H 212 Q 220,352 220,360 V 388" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- guard → Jev -->
+        <path d="M 384,300 V 344 Q 384,352 392,352 H 472 Q 480,352 480,360 V 388" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- fill → BSC -->
+        <path d="M 576,300 V 344 Q 576,352 584,352 H 716 Q 724,352 724,360 V 388" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- holdings → BSC -->
+        <path d="M 768,300 V 344 Q 768,352 760,352 H 756 Q 748,352 748,360 V 388" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- seller → public APIs -->
+        <path d="M 200,476 V 452" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <!-- agents → seller -->
+        <path d="M 400,508 H 304" fill="none" stroke="#8b93a3" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="308" y="500" width="88" height="15" rx="3" fill="#0b0e14"/>
+        <text x="352" y="511" fill="#8b93a3" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.04em">ERC-8183 / X402</text>
+
+        <!-- ── nodes ───────────────────────────────────────────── -->
+
+        <!-- Key store (store) -->
+        <rect x="48" y="108" width="152" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="48" y="108" width="152" height="64" rx="6" fill="rgba(232,236,241,0.05)" stroke="#b8c0cf" stroke-width="1"/>
+        <rect x="56" y="116" width="34" height="12" rx="2" fill="none" stroke="rgba(184,192,207,0.45)" stroke-width="0.8"/>
+        <text x="73" y="125" fill="#b8c0cf" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KEYS</text>
+        <text x="124" y="144" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Key store</text>
+        <text x="124" y="160" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">server-side only</text>
+
+        <!-- User / Judge (input) -->
+        <rect x="224" y="108" width="152" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="224" y="108" width="152" height="64" rx="6" fill="rgba(139,147,163,0.10)" stroke="#8b93a3" stroke-width="1"/>
+        <rect x="232" y="116" width="36" height="12" rx="2" fill="none" stroke="rgba(139,147,163,0.45)" stroke-width="0.8"/>
+        <text x="250" y="125" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTOR</text>
+        <text x="300" y="144" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">User / Judge</text>
+        <text x="300" y="160" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">browser · no keys</text>
+
+        <!-- Next.js App (focal) -->
+        <rect x="400" y="108" width="152" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="400" y="108" width="152" height="64" rx="6" fill="rgba(52,211,153,0.08)" stroke="#34d399" stroke-width="1.2"/>
+        <rect x="408" y="116" width="26" height="12" rx="2" fill="none" stroke="rgba(52,211,153,0.50)" stroke-width="0.8"/>
+        <text x="421" y="125" fill="#34d399" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+        <text x="476" y="144" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Next.js App</text>
+        <text x="476" y="160" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">vercel · 6 routes</text>
+
+        <!-- /api/truth -->
+        <rect x="108" y="236" width="168" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="108" y="236" width="168" height="64" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <rect x="116" y="244" width="20" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.28)" stroke-width="0.8"/>
+        <text x="126" y="253" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+        <text x="192" y="272" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">/api/truth</text>
+        <text x="192" y="288" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">both prices</text>
+
+        <!-- /api/guard -->
+        <rect x="300" y="236" width="168" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="300" y="236" width="168" height="64" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <rect x="308" y="244" width="20" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.28)" stroke-width="0.8"/>
+        <text x="318" y="253" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+        <text x="384" y="272" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">/api/guard</text>
+        <text x="384" y="288" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">intent verdict</text>
+
+        <!-- /api/fill -->
+        <rect x="492" y="236" width="168" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="492" y="236" width="168" height="64" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <rect x="500" y="244" width="20" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.28)" stroke-width="0.8"/>
+        <text x="510" y="253" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+        <text x="576" y="272" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">/api/fill</text>
+        <text x="576" y="288" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">quote · simulate</text>
+
+        <!-- /api/holdings -->
+        <rect x="684" y="236" width="168" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="684" y="236" width="168" height="64" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <rect x="692" y="244" width="20" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.28)" stroke-width="0.8"/>
+        <text x="702" y="253" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+        <text x="768" y="272" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">/api/holdings</text>
+        <text x="768" y="288" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">balances</text>
+
+        <!-- Public APIs (external) -->
+        <rect x="120" y="388" width="200" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="120" y="388" width="200" height="64" rx="6" fill="rgba(232,236,241,0.03)" stroke="rgba(232,236,241,0.28)" stroke-width="1"/>
+        <rect x="128" y="396" width="26" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.22)" stroke-width="0.8"/>
+        <text x="141" y="405" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DATA</text>
+        <text x="220" y="424" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Public APIs</text>
+        <text x="220" y="440" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">RWA · market · audit</text>
+
+        <!-- TypeSafe Jev (external) -->
+        <rect x="380" y="388" width="200" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="380" y="388" width="200" height="64" rx="6" fill="rgba(232,236,241,0.03)" stroke="rgba(232,236,241,0.28)" stroke-width="1"/>
+        <rect x="388" y="396" width="28" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.22)" stroke-width="0.8"/>
+        <text x="402" y="405" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+        <text x="480" y="424" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">TypeSafe Jev</text>
+        <text x="480" y="440" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">verdict + fallback</text>
+
+        <!-- BSC mainnet (external) -->
+        <rect x="640" y="388" width="200" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="640" y="388" width="200" height="64" rx="6" fill="rgba(232,236,241,0.03)" stroke="rgba(232,236,241,0.28)" stroke-width="1"/>
+        <rect x="648" y="396" width="32" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.22)" stroke-width="0.8"/>
+        <text x="664" y="405" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CHAIN</text>
+        <text x="740" y="424" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">BSC mainnet</text>
+        <text x="740" y="440" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">pools · RPC</text>
+
+        <!-- Agent seller -->
+        <rect x="100" y="476" width="200" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="100" y="476" width="200" height="64" rx="6" fill="#11161f" stroke="rgba(232,236,241,0.45)" stroke-width="1"/>
+        <rect x="108" y="484" width="34" height="12" rx="2" fill="none" stroke="rgba(232,236,241,0.28)" stroke-width="0.8"/>
+        <text x="125" y="493" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+        <text x="200" y="512" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Agent seller</text>
+        <text x="200" y="528" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">ERC-8004 · testnet</text>
+
+        <!-- Other agents (input) -->
+        <rect x="400" y="476" width="200" height="64" rx="6" fill="#0b0e14"/>
+        <rect x="400" y="476" width="200" height="64" rx="6" fill="rgba(139,147,163,0.10)" stroke="#8b93a3" stroke-width="1"/>
+        <rect x="408" y="484" width="36" height="12" rx="2" fill="none" stroke="rgba(139,147,163,0.45)" stroke-width="0.8"/>
+        <text x="426" y="493" fill="#8b93a3" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTOR</text>
+        <text x="500" y="512" fill="#e8ecf1" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Other agents</text>
+        <text x="500" y="528" fill="#8b93a3" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">MCP · x402 buyers</text>
+
+        <!-- ── legend ───────────────────────────────────────────── -->
+        <line x1="40" y1="546" x2="920" y2="546" stroke="rgba(232,236,241,0.10)" stroke-width="0.8"/>
+        <text x="40" y="562" fill="#5c6577" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+        <rect x="130" y="553" width="14" height="10" rx="2" fill="rgba(139,147,163,0.10)" stroke="#8b93a3" stroke-width="1"/>
+        <text x="150" y="561" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">Caller</text>
+
+        <rect x="240" y="553" width="14" height="10" rx="2" fill="rgba(52,211,153,0.08)" stroke="#34d399" stroke-width="1"/>
+        <text x="260" y="561" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">Product</text>
+
+        <rect x="350" y="553" width="14" height="10" rx="2" fill="#11161f" stroke="rgba(232,236,241,0.30)" stroke-width="1"/>
+        <text x="370" y="561" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">API route</text>
+
+        <rect x="470" y="553" width="14" height="10" rx="2" fill="rgba(232,236,241,0.03)" stroke="rgba(232,236,241,0.28)" stroke-width="1"/>
+        <text x="490" y="561" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">External service</text>
+
+        <rect x="630" y="553" width="14" height="10" rx="2" fill="rgba(232,236,241,0.05)" stroke="#b8c0cf" stroke-width="1"/>
+        <text x="650" y="561" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">Key store</text>
+
+        <line x1="760" y1="558" x2="788" y2="558" stroke="#34d399" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <text x="796" y="561" fill="#8b93a3" font-size="8.5" font-family="'Geist', sans-serif">Headline path</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>
