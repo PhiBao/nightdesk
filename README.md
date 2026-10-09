@@ -7,6 +7,8 @@
 
 Built for the **BNB Hack: Tokenized Stocks Edition** (BSC mainnet, spot only).
 
+> **Judge quickstart (2 minutes).** Open the [live app](https://nightdesk-psi.vercel.app) — the truth card and guard verdict load on their own: three venues, both prices, session badge, and an intent verdict that routes to limit-at-reference instead of a blind market buy. Edit the intent and press *Check truth* to re-run. Then watch the [100-second demo](https://youtu.be/N-KIcmmdEZE) and check the [proof ledger](#8-proof-ledger-all-verifiable) — five mainnet transactions, all verifiable on BscScan.
+
 ---
 
 ## 1. Thesis
